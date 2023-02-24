@@ -1,18 +1,31 @@
 import numpy as np
 import pandas as pd
 from src.latin_square import LatinSquare
-from src.sbbo_mh import SBBO
+from src.sbbo import SBBO
+from src.sbbo_mh import MHSBBO
+from src.sbbo_gibbs import GibbsSBBO
 from ngboost import NGBRegressor
+from ngboost.distns import Exponential, Normal
+from ngboost.scores import LogScore, CRPScore
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 
 
-opt_prob = LatinSquare()
-ngb = NGBRegressor()
-BO = SBBO(opt_prob, ngb, np.arange(1, 1000))
+opt_prob = LatinSquare(n=5)
+lin_mod = LinearRegression()
+dec_tree = DecisionTreeRegressor(criterion='friedman_mse', max_depth=5)
 
-a,b,c = BO.iterate()
+params = {}
+# params["model"] = NGBRegressor()
+params["model"] = NGBRegressor(Dist=Normal, Base=dec_tree)
+params["af"] = 'EI'
+params["cooling_schedule"] = np.arange(1, 1000, 1)
+params["burnin"] = 0.1
+fname = "results/LS5_mNGBdec_oMH.csv"
+method = MHSBBO(opt_prob, params)
 
-print("Done")
+method.co_problem.y.max()
 
+sbbo = SBBO(opt_prob, method, fname)
+sbbo.iterate(500)

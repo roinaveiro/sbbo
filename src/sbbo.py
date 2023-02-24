@@ -14,13 +14,16 @@ class SBBO:
         
     """
 
-    def __init__(self, co_problem, method):
+    def __init__(self, co_problem, method, fname):
 
         self.co_problem = co_problem
         self.search_method = method
 
         self.X = self.search_method.X
         self.y = self.search_method.y
+
+        self.fname = fname
+
 
 
     def get_candidate(self):
@@ -41,19 +44,33 @@ class SBBO:
 
     def iterate(self, n_eval):
 
+        best_vals = np.zeros(n_eval)
+        current_vals = np.zeros(n_eval)
+        iters = np.arange(n_eval)
+
+
         for i in range(n_eval):
             candidate = self.get_candidate()
             value, value_unscaled =  self.evaluate_candidate(candidate)
             self.update(candidate, value)
+            
+            iters[i] = i
+            best_vals[i] = self.co_problem.compute_obj(self.X[self.y.argmax()], scale=False)
+            current_vals[i] = value_unscaled
 
             print("Current value: ", value_unscaled)
-            print("Best value: ", 
-                  self.co_problem.compute_obj(self.X[self.y.argmax()], scale=False))
-            
+            print("Best value: ", best_vals[i])
             print("Best X", self.X[self.y.argmax()])
 
             print("Dim X", self.X.shape)
             print("Dim y", self.y.shape)
+
+        df = pd.DataFrame({"iter": iters,
+                      "best_vals": best_vals,
+                      "current_vals": current_vals,
+                      })
+        
+        df.to_csv(self.fname, index=False)
 
 
     def extract_best(self):

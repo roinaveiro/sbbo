@@ -93,7 +93,7 @@ class MHSBBO:
         z_init, y_sample, value = self.init_search()
 
         for i, temp in enumerate(self.cooling_schedule):
-            if i%10 == 0:
+            if i%100 == 0:
                 #print("Percentage completed:", 
                 #np.round( 100*i/len(self.cooling_schedule), 2) )
                 #print("Current state", z_init.reshape(5,-1))
