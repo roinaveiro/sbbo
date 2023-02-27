@@ -58,12 +58,15 @@ class SBBO:
             best_vals[i] = self.co_problem.compute_obj(self.X[self.y.argmax()], scale=False)
             current_vals[i] = value_unscaled
 
+            print("Iter:", i)
+            print("#########################################")
             print("Current value: ", value_unscaled)
             print("Best value: ", best_vals[i])
             print("Best X", self.X[self.y.argmax()])
 
             print("Dim X", self.X.shape)
             print("Dim y", self.y.shape)
+            print("#########################################")
 
         df = pd.DataFrame({"iter": iters,
                       "best_vals": best_vals,

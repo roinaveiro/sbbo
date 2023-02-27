@@ -18,11 +18,12 @@ dec_tree = DecisionTreeRegressor(criterion='friedman_mse', max_depth=5)
 
 params = {}
 # params["model"] = NGBRegressor()
-params["model"] = NGBRegressor(Dist=Normal, Base=dec_tree)
+# params["model"] = NGBRegressor(Dist=Normal, Base=lin_mod)
+params["model"] = NGBRegressor(Dist=Normal, Base=lin_mod)
 params["af"] = 'EI'
-params["cooling_schedule"] = np.arange(1, 1000, 1)
+params["cooling_schedule"] = np.arange(1, 1000, 10)
 params["burnin"] = 0.1
-fname = "results/LS5_mNGBdec_oMH.csv"
+fname = "results/LS5_mNGBlin_oMH_afEI.csv"
 method = MHSBBO(opt_prob, params)
 
 method.co_problem.y.max()
