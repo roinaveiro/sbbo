@@ -118,14 +118,14 @@ class MHSBBO:
 
 
 
-    def utility(self, y, z, flag='avg'):
+    def utility(self, y, z, flag='AVG'):
 
         if flag == 'EI':
             result = np.zeros_like(y) 
             result[y > self.y.max()] = y[y > self.y.max()]  - self.y.max()
             return result + 0.0001
 
-        elif flag == 'avg':
+        elif flag == 'AVG':
             return y
         
         elif flag == 'PI':

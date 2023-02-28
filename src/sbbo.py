@@ -14,7 +14,7 @@ class SBBO:
         
     """
 
-    def __init__(self, co_problem, method, fname):
+    def __init__(self, co_problem, method, fname, epsilon=0.0):
 
         self.co_problem = co_problem
         self.search_method = method
@@ -22,12 +22,17 @@ class SBBO:
         self.X = self.search_method.X
         self.y = self.search_method.y
 
+        self.epsilon = epsilon
+
         self.fname = fname
 
 
-
     def get_candidate(self):
-        candidate, _ = self.search_method.iterate()
+        if np.random.uniform() < self.epsilon:
+            candidate = self.co_problem.generate_candidate()
+        else:
+            candidate, _ = self.search_method.iterate()
+
         return candidate
 
     def evaluate_candidate(self, candidate):

@@ -42,7 +42,7 @@ class GibbsSBBO:
         z_init_d = self.co_problem.dummify(z_init)
         preds = self.model.pred_dist(z_init_d)
         y_sample = preds[0].sample(self.cooling_schedule[0])
-        value = self.utility(y_sample, z_init)
+        value = self.utility(y_sample, z_init, self.af)
 
         return z_init, y_sample, value
 
@@ -53,7 +53,7 @@ class GibbsSBBO:
         #--#
         preds = self.model.pred_dist(z_d)
         y_sample_new = preds[0].sample(len(y_sample_old))
-        value_new = self.utility(y_sample_new, z)
+        value_new = self.utility(y_sample_new, z, self.af)
 
         condition = np.random.uniform(size=len(value_new)) < value_new / value_old
         y_sample_old[condition] = y_sample_new[condition] 
@@ -107,7 +107,7 @@ class GibbsSBBO:
 
             z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
             y_sample = np.append(y_sample, np.random.choice(y_sample, self.step))
-            value = self.utility(y_sample, z_init)
+            value = self.utility(y_sample, z_init, self.af)
             
         z_star, quality = self.extract_solution()
         z_star_d = self.co_problem.dummify(z_star.reshape(1,-1))
@@ -122,24 +122,20 @@ class GibbsSBBO:
         self.model.fit(self.X, self.y)
 
 
-
-
-    def utility(self, y, z, flag='avg'):
+    def utility(self, y, z, flag='AVG'):
 
         if flag == 'EI':
             result = np.zeros_like(y) + 0.0001
             result[y > self.y.max()] = y[y > self.y.max()]  - self.y.max()
             return result
 
-        elif flag == 'avg':
+        elif flag == 'AVG':
             return y
         
         elif flag == 'PI':
             result = np.zeros_like(y) + 0.0001
             result[y >= self.y.max()] = 1.0
             return result 
-
-            
 
 
     def get_mode(self, samples):
