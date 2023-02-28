@@ -41,6 +41,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     params = {}
+    params["cooling_schedule"] = np.arange(1, 1000, 10)
+    params["burnin"] = 0.1
 
     if args.problem == "CON":
         opt_prob = Contamination(lamda=0.0001, n=5)
@@ -58,11 +60,11 @@ if __name__ == "__main__":
         params["model"] = NGBRegressor(Dist=Normal, Base=learner)
 
     if args.acqfun == "EI":
-        params["af"] = 'EI'
+        params["af"] = "EI"
     elif args.acqfun == "AVG":
-        params["af"] == "AVG"
+        params["af"] = "AVG"
     elif args.acqfun == "PI":
-        params["af"] == "PI"
+        params["af"] = "PI"
 
     if args.search == "MH":
         search = MHSBBO(opt_prob, params)
@@ -71,8 +73,6 @@ if __name__ == "__main__":
     elif args.search == "RS":
         search = RS(opt_prob, params)
 
-    params["cooling_schedule"] = np.arange(1, 1000, 10)
-    params["burnin"] = 0.1
 
     folder = f"results/{args.problem}/"
     if not os.path.exists(folder):
