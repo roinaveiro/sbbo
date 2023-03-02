@@ -31,9 +31,9 @@ class SBBO:
         if np.random.uniform() < self.epsilon:
             candidate = self.co_problem.generate_candidate()
         else:
-            candidate, _ = self.search_method.iterate()
+            candidate, quality = self.search_method.iterate()
 
-        return candidate
+        return candidate, quality
 
     def evaluate_candidate(self, candidate):
         value = self.co_problem.compute_obj(candidate)
@@ -55,7 +55,7 @@ class SBBO:
 
 
         for i in range(n_eval):
-            candidate = self.get_candidate()
+            candidate, quality = self.get_candidate()
             value, value_unscaled =  self.evaluate_candidate(candidate)
             self.update(candidate, value)
             
@@ -65,6 +65,8 @@ class SBBO:
 
             print("Iter:", i)
             print("#########################################")
+            print("Current candidate", candidate)
+            print("Current quality", quality)
             print("Current value: ", value_unscaled)
             print("Best value: ", best_vals[i])
             print("Best X", self.X[self.y.argmax()])

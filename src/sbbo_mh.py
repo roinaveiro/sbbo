@@ -93,14 +93,19 @@ class MHSBBO:
         z_init, y_sample, value = self.init_search()
 
         for i, temp in enumerate(self.cooling_schedule):
+
             if i%10 == 0:
-                #print("Percentage completed:", 
-                #np.round( 100*i/len(self.cooling_schedule), 2) )
+                print("Percentage completed:", 
+                np.round( 100*i/len(self.cooling_schedule), 2) )
+                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
                 #print("Current state", z_init.reshape(5,-1))
                 #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
+                print("Current quality", quality)
                 print(np.mean(y_sample))
 
             z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
+            
             
 
                 
@@ -140,7 +145,7 @@ class MHSBBO:
         return vals[index]
 
     # CHECK!
-    def extract_solution(self, modal=False):
+    def extract_solution(self, modal=True):
 
         if modal:
             z_star = np.zeros_like(self.z_samples[0])
@@ -150,11 +155,15 @@ class MHSBBO:
                 z_star[j] = self.get_mode(self.z_samples[  burnin_end: , j ])
 
             # quality = self.co_problem.compute_obj(z_star)
-            quality = self.model.predict(self.co_problem.dummify(z_star.reshape(1,-1)) )
+            # quality = self.model.predict(self.co_problem.dummify(z_star.reshape(1,-1)) )
+            dist = self.model.pred_dist(z_star.reshape(1,-1))
+            quality = np.mean( self.utility(dist.sample(1000), z_star, self.af) )
 
         else:
             z_star = self.z_samples[-1]
             quality = self.model.predict(self.co_problem.dummify(z_star.reshape(1,-1)) )
+            dist = self.model.pred_dist(z_star.reshape(1,-1))
+            quality = np.mean( self.utility(dist.sample(1000), z_star, self.af) )
 
         return z_star, quality
 
