@@ -140,7 +140,7 @@ class MHSBBO:
         return vals[index]
 
     # CHECK!
-    def extract_solution(self, modal=True):
+    def extract_solution(self, modal=False):
 
         if modal:
             z_star = np.zeros_like(self.z_samples[0])
