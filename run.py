@@ -17,9 +17,11 @@ from ngboost import NGBRegressor
 from ngboost.distns import Exponential, Normal
 from ngboost.scores import LogScore, CRPScore
 
+# Learners
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LassoCV
+from src.models.GPr import GPr
 
 
 def parse_args():
@@ -58,6 +60,9 @@ if __name__ == "__main__":
     elif args.learner == "NGBlinCV":
         learner = LassoCV(cv=5)
         params["model"] = NGBRegressor(Dist=Normal, Base=learner)
+    elif args.learner == "GPr":
+        learner = GPr()
+        params["model"] = learner
 
     if args.acqfun == "EI":
         params["af"] = "EI"
@@ -74,7 +79,11 @@ if __name__ == "__main__":
         search = RS(opt_prob, params)
 
 
-    folder = f"results/{args.problem}/"
+    root_folder = f"results/{args.problem}/"
+    if not os.path.exists(root_folder):
+        os.makedirs(root_folder)
+
+    folder = f"results/{args.problem}/{args.search}/"
     if not os.path.exists(folder):
         os.makedirs(folder)
 
