@@ -4,10 +4,10 @@ import os
 run = True
 problem = 'CON'
 learner = 'NGBlin'
-acqfun  = 'EI'
+acqfun  = 'AVG'
 search  = 'MH'
-epsilon = 0.0
-n_exp   = np.arange(1,9)
+epsilon = 0.1
+n_exp   = np.arange(1,10)
 
 header = '''#!/bin/bash
 #$ -q teano
