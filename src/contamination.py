@@ -30,6 +30,8 @@ class Contamination(object):
         self.lamda = lamda
         self.n_init = n
         self.ncov = CONTAMINATION_N_STAGES
+
+        self.scaler = 5.0
        
         # In all evaluation, the same sampled values are used.
         self.init_Z, self.lambdas, self.gammas = generate_contamination_dynamics(random_seed_pair[0])

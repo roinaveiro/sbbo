@@ -102,7 +102,7 @@ class MHSBBO:
                 #print("Current state", z_init.reshape(5,-1))
                 #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
                 print("Current quality", quality)
-                print(np.mean(y_sample))
+                #print(np.mean(y_sample))
 
             z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
             
@@ -131,7 +131,7 @@ class MHSBBO:
             return result + 0.0001
 
         elif flag == 'AVG':
-            return y
+            return y + self.co_problem.scaler ## WTF!
         
         elif flag == 'PI':
             result = np.zeros_like(y) 

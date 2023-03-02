@@ -18,6 +18,8 @@ class LatinSquare:
         self.max_obj = 2 * (self.l * (self.l - 1) ) + 3*self.std
         self.min_obj = -3 * self.std
 
+        self.scaler = 0.0
+
         self.generate_init_data(self.n_init)
 
 
