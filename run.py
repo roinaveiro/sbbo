@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     params = {}
     params["cooling_schedule"] = np.arange(1, 1000, 10)
-    params["burnin"] = 0.6
+    params["burnin"] = 0.8
 
     if args.problem == "CON":
         opt_prob = Contamination(lamda=0.0001, n=5)
