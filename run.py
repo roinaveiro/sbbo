@@ -12,6 +12,7 @@ from src.sbbo import SBBO
 from src.sbbo_mh import MHSBBO
 from src.sbbo_gibbs import GibbsSBBO
 from src.sbbo_rs import RS
+from src.sbbo_sa import SA
 
 from ngboost import NGBRegressor
 from ngboost.distns import Exponential, Normal
@@ -77,6 +78,8 @@ if __name__ == "__main__":
         search = GibbsSBBO(opt_prob, params)
     elif args.search == "RS":
         search = RS(opt_prob, params)
+    elif args.search == "SA":
+        search = SA(opt_prob, params)
 
 
     root_folder = f"results/{args.problem}/"
@@ -87,7 +90,14 @@ if __name__ == "__main__":
     if not os.path.exists(folder):
         os.makedirs(folder)
 
-    fname = f"{folder}exp{args.nexp}_{args.problem}_m{args.learner}_o{args.search}_af{args.acqfun}.csv"
+    if args.search == "SA":
+        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}.csv"
+
+    elif args.search == "RS":
+        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}.csv"
+
+    else:
+        fname = f"{folder}exp{args.nexp}_{args.problem}_m{args.learner}_o{args.search}_af{args.acqfun}.csv"
     
     print("Write to...", fname)
 
