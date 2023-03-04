@@ -26,7 +26,7 @@ class Contamination(object):
     """
     Contamination Control Problem with the simplest graph
     """
-    def __init__(self, lamda, n=10, random_seed_pair=(None, None)):
+    def __init__(self, lamda, n=10, random_seed_pair=(129534, 128593)):
         self.lamda = lamda
         self.n_init = n
         self.ncov = CONTAMINATION_N_STAGES

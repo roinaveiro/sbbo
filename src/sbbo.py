@@ -30,6 +30,8 @@ class SBBO:
     def get_candidate(self):
         if np.random.uniform() < self.epsilon:
             candidate = self.co_problem.generate_candidate()
+            dist = self.search_method.model.pred_dist(candidate.reshape(1,-1))
+            quality = np.mean( self.search_method.utility(dist.sample(1000), candidate, self.search_method.af) )
         else:
             candidate, quality = self.search_method.iterate()
 
