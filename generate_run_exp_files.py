@@ -3,11 +3,11 @@ import os
 
 run = True
 problem = 'CON'
-learner = 'NGBlin'
+learner = 'GPr'
 acqfun  = 'AVG'
-search  = 'MH'
-epsilon = 0.1
-n_exp   = np.arange(1,10)
+search  = 'SA'
+epsilon = 0.0
+n_exp   = np.arange(0,10)
 
 header = '''#!/bin/bash
 #$ -q teano
@@ -16,7 +16,7 @@ header = '''#!/bin/bash
 #$ -cwd
 
 # Load anaconda malware environment
-conda activate base
+conda activate tf-sbbo
 
 # Run the executable
 '''
