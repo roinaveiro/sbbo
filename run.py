@@ -49,7 +49,7 @@ if __name__ == "__main__":
     params["modal"]  = False
 
     if args.problem == "CON":
-        opt_prob = Contamination(lamda=0.0001, n=5)
+        opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(129534, 128593))
     elif args.problem == "LS5":
         opt_prob = LatinSquare(n=5)
 

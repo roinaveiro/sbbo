@@ -21,6 +21,7 @@ class MHSBBO:
         self.X = self.co_problem.X
         self.y = self.co_problem.y
         self.empty_model = params["model"]
+        self.modal = params["modal"]
 
         self.model = copy.deepcopy(self.empty_model)
         self.model.fit(self.X, self.y)
@@ -145,9 +146,9 @@ class MHSBBO:
         return vals[index]
 
     # CHECK!
-    def extract_solution(self, modal=True):
+    def extract_solution(self):
 
-        if modal:
+        if self.modal:
             z_star = np.zeros_like(self.z_samples[0])
             burnin_end = int(self.burnin * len(self.cooling_schedule) )
             
