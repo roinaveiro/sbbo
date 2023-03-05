@@ -8,6 +8,7 @@ acqfun  = 'AVG'
 search  = 'SA'
 epsilon = 0.0
 n_exp   = np.arange(0,10)
+seed    = 23
 
 header = '''#!/bin/bash
 #$ -q teano
@@ -28,17 +29,35 @@ conda deactivate
 '''
 
 text = []
-for i in n_exp:
-    current = (f"python -u run.py --problem {problem} "  
-               f"--learner {learner} --acqfun {acqfun} " 
-               f"--niters 500 --search {search} " 
-               f"--epsilon {epsilon} --nexp {i} " 
-               f"> exp_{i}_{problem}_{learner}_o{search}_af{acqfun}.out")
-    
-    current = header + current + tail
-    
-    with open(f'experiment{i}.sub', 'w') as f:
-        f.write(current)
+if seed is not None:
+
+    for i in n_exp:
+        current = (f"python -u run.py --problem {problem} "  
+                f"--learner {learner} --acqfun {acqfun} " 
+                f"--niters 500 --search {search} " 
+                f"--epsilon {epsilon} " 
+                f"--seed_conf {seed} --nexp {i} "
+                f"> exp_{i}_{problem}_{learner}_o{search}_af{acqfun}.out")
+        
+        current = header + current + tail
+        
+        with open(f'experiment{i}.sub', 'w') as f:
+            f.write(current)
+else:
+
+    for i in n_exp:
+        current = (f"python -u run.py --problem {problem} "  
+                f"--learner {learner} --acqfun {acqfun} " 
+                f"--niters 500 --search {search} " 
+                f"--epsilon {epsilon} --nexp {i} " 
+                f"> exp_{i}_{problem}_{learner}_o{search}_af{acqfun}.out")
+        
+        current = header + current + tail
+        
+        with open(f'experiment{i}.sub', 'w') as f:
+            f.write(current)
+
+
 
 
 if run:
