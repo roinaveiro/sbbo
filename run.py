@@ -24,6 +24,8 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LassoCV
 from src.models.GPr import GPr
 
+from src.seed_conf import generate_random_seed_pair_contamination
+
 
 def parse_args():
 
@@ -35,6 +37,7 @@ def parse_args():
     parser.add_argument("--niters", type=int, default=500)
     parser.add_argument("--epsilon", type=float, default=0.0)
     parser.add_argument("--nexp", type=int, default=0)
+    parser.add_argument("--seed_conf", type=int, default=None)
 
     return parser.parse_args()
   
@@ -43,13 +46,25 @@ if __name__ == "__main__":
 
     args = parse_args()
 
+    random_seed_config_ = args.seed_conf
+    if random_seed_config_ is not None:
+        assert 1 <= int(random_seed_config_) <= 25
+        random_seed_config_ -= 1
+
+
     params = {}
     params["cooling_schedule"] = np.arange(1, 1000, 10)
     params["burnin"] = 0.8
     params["modal"]  = False
 
     if args.problem == "CON":
-        opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(129534, 128593))
+        if random_seed_config_ is not None:
+            random_seed_pair_ = generate_random_seed_pair_contamination()
+            case_seed_ = sorted(random_seed_pair_.keys())[int(random_seed_config_ / 5)]
+            init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
+            opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(case_seed_, init_seed_))
+        else:
+            opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(None, None))
     elif args.problem == "LS5":
         opt_prob = LatinSquare(n=5)
 
@@ -92,13 +107,13 @@ if __name__ == "__main__":
         os.makedirs(folder)
 
     if args.search == "SA":
-        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}.csv"
+        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}_seed{args.seed_conf}.csv"
 
     elif args.search == "RS":
-        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}.csv"
+        fname = f"{folder}exp{args.nexp}_{args.problem}_o{args.search}_seed{args.seed_conf}.csv"
 
     else:
-        fname = f"{folder}exp{args.nexp}_{args.problem}_m{args.learner}_o{args.search}_af{args.acqfun}.csv"
+        fname = f"{folder}exp{args.nexp}_{args.problem}_m{args.learner}_o{args.search}_af{args.acqfun}_seed{args.seed_conf}.csv"
     
     print("Write to...", fname)
 
