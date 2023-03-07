@@ -3,12 +3,12 @@ import os
 
 run = True
 problem = 'CON'
-learner = 'GPr'
-acqfun  = 'AVG'
-search  = 'SA'
+learner = 'NGBlin'
+acqfun  = 'EI'
+search  = 'MH'
 epsilon = 0.0
 n_exp   = np.arange(0,10)
-seed    = 23
+seed    = np.arange(1,11)
 
 header = '''#!/bin/bash
 #$ -q teano
@@ -36,8 +36,8 @@ if seed is not None:
                 f"--learner {learner} --acqfun {acqfun} " 
                 f"--niters 500 --search {search} " 
                 f"--epsilon {epsilon} " 
-                f"--seed_conf {seed} --nexp {i} "
-                f"> exp_{i}_{problem}_{learner}_o{search}_af{acqfun}.out")
+                f"--seed_conf {seed[i]} --nexp {i} "
+                f"> exp_{i}_{problem}_{learner}_o{search}_af{acqfun}_seed{seed[i]}.out")
         
         current = header + current + tail
         
