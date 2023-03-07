@@ -2,11 +2,11 @@ import numpy as np
 
 SEED_STR_LIST = ['CONTAMINATION']
 
-def generate_random_seed_pair_contamination():
-    return _generate_random_seed_pair('CONTAMINATION', n_test_case_seed=5, n_init_point_seed=5)
+def generate_random_seed_contamination():
+    return _generate_random_seed('CONTAMINATION', n_test_case_seed=10, n_init_point_seed=1)
 
 
-def _generate_random_seed_pair(seed_str, n_test_case_seed=5, n_init_point_seed=5):
+def _generate_random_seed(seed_str, n_test_case_seed=10, n_init_point_seed=1):
     assert seed_str in SEED_STR_LIST
     rng_state = np.random.RandomState(seed=sum([ord(ch) for ch in seed_str]))
     result = {}

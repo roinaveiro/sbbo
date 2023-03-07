@@ -26,7 +26,7 @@ class Contamination(object):
     """
     Contamination Control Problem with the simplest graph
     """
-    def __init__(self, lamda, n=10, random_seed_pair=(129534, 128593)):
+    def __init__(self, lamda, n=10, random_seed=305):
         self.lamda = lamda
         self.n_init = n
         self.ncov = CONTAMINATION_N_STAGES
@@ -34,8 +34,8 @@ class Contamination(object):
         self.scaler = 5.0
        
         # In all evaluation, the same sampled values are used.
-        self.init_Z, self.lambdas, self.gammas = generate_contamination_dynamics(random_seed_pair[0])
-        self.generate_init_data()
+        self.init_Z, self.lambdas, self.gammas = generate_contamination_dynamics(random_seed)
+        self.generate_init_data(random_seed)
 
     def evaluate(self, x):
         if x.ndim == 1:
@@ -57,8 +57,8 @@ class Contamination(object):
         else:
             return evaluation
     
-    def generate_init_data(self, n=100):
-        self.X = np.random.choice([0,1],
+    def generate_init_data(self, seed):
+        self.X = np.random.RandomState(seed).choice([0,1],
                                    size=CONTAMINATION_N_STAGES*self.n_init).reshape(self.n_init,-1)
         self.y = self.evaluate(self.X)
 

@@ -8,7 +8,7 @@ acqfun  = 'EI'
 search  = 'MH'
 epsilon = 0.0
 n_exp   = np.arange(0,10)
-seed    = np.arange(1,11)
+seed    = np.arange(1,11) # Between 1 and 10 please!!
 
 header = '''#!/bin/bash
 #$ -q teano

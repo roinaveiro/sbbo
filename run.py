@@ -24,7 +24,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LassoCV
 from src.models.GPr import GPr
 
-from src.seed_conf import generate_random_seed_pair_contamination
+from src.seed_conf import generate_random_seed_contamination
 
 
 def parse_args():
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     random_seed_config_ = args.seed_conf
     if random_seed_config_ is not None:
-        assert 1 <= int(random_seed_config_) <= 25
+        assert 1 <= int(random_seed_config_) <= 10
         random_seed_config_ -= 1
 
 
@@ -59,12 +59,13 @@ if __name__ == "__main__":
 
     if args.problem == "CON":
         if random_seed_config_ is not None:
-            random_seed_pair_ = generate_random_seed_pair_contamination()
-            case_seed_ = sorted(random_seed_pair_.keys())[int(random_seed_config_ / 5)]
-            init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
-            opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(case_seed_, init_seed_))
+            random_seed_pair_ = generate_random_seed_contamination()
+            seed_ = sorted(random_seed_pair_.keys())[int(random_seed_config_)]
+            print(seed_)
+            # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
+            opt_prob = Contamination(lamda=0.0001, n=5, random_seed=seed_)
         else:
-            opt_prob = Contamination(lamda=0.0001, n=5, random_seed_pair=(None, None))
+            opt_prob = Contamination(lamda=0.0001, n=5, random_seed=None)
     elif args.problem == "LS5":
         opt_prob = LatinSquare(n=5)
 
