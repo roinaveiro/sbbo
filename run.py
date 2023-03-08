@@ -48,8 +48,8 @@ if __name__ == "__main__":
 
     random_seed_config_ = args.seed_conf
     if random_seed_config_ is not None:
-        assert 1 <= int(random_seed_config_) <= 10
-        random_seed_config_ -= 1
+        assert 0 <= int(random_seed_config_) <= 24
+        #random_seed_config_ -= 1
 
 
     params = {}
@@ -59,9 +59,9 @@ if __name__ == "__main__":
 
     if args.problem == "CON":
         if random_seed_config_ is not None:
-            random_seed_pair_ = generate_random_seed_contamination()
-            seed_ = sorted(random_seed_pair_.keys())[int(random_seed_config_)]
-            print(seed_)
+            random_seed = generate_random_seed_contamination()
+            seed_ = random_seed[random_seed_config_]
+            print("Seed", seed_)
             # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
             opt_prob = Contamination(lamda=0.0001, n=5, random_seed=seed_)
         else:
