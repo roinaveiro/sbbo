@@ -23,6 +23,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LassoCV
 from src.models.GPr import GPr
+from src.models.bocs.LinReg import LinReg
+
 
 from src.seed_conf import generate_random_seed_contamination
 
@@ -80,6 +82,9 @@ if __name__ == "__main__":
         params["model"] = NGBRegressor(Dist=Normal, Base=learner)
     elif args.learner == "GPr":
         learner = GPr()
+        params["model"] = learner
+    elif args.learner == "BOCS":
+        learner = LinReg(nVars=opt_prob.ncov, order=2)
         params["model"] = learner
 
     if args.acqfun == "EI":

@@ -7,12 +7,15 @@
 import numpy as np
 from itertools import combinations
 from .bhs import bhs
+from src.config import get_multi_sampler
 
 class LinReg:
 
-	def __init__(self, nVars, order):
-		self.nVars = nVars
-		self.order = order
+	def __init__(self, nVars, order, nGibbs=2000, burnin=0.2):
+		self.nVars  = nVars
+		self.order  = order
+		self.burnin = burnin
+		self.nGibbs = nGibbs
 
 	# ---------------------------------------------------------
 	# ---------------------------------------------------------
@@ -40,10 +43,8 @@ class LinReg:
 	# ---------------------------------------------------------
 	# ---------------------------------------------------------
 
-	def train(self, X, y):
+	def fit(self, X, y):
 
-		# Set nGibbs (Gibbs iterations to run)
-		nGibbs = int(1e3)
 
 		# set data
 		self.xTrain = X
@@ -72,7 +73,7 @@ class LinReg:
 
 			# re-run if there is an error during sampling
 			try:
-				alphaGibbs,a0,_,_,_ = bhs(self.xTrain,self.yTrain,nGibbs,0,1)
+				alphaGibbs,a0,_,_,_ = bhs(self.xTrain,self.yTrain,self.nGibbs,0,1)
 			except:
 				print('error during Gibbs sampling. Trying again.')
 				continue
@@ -86,7 +87,7 @@ class LinReg:
 		alpha_pad[idx_nnzero] = alphaGibbs[:,-1]
 		self.alpha = np.append(a0, alpha_pad)
 
-		alpha_pad = np.zeros([nCoeffs, nGibbs])
+		alpha_pad = np.zeros([nCoeffs, self.nGibbs])
 		alpha_pad[idx_nnzero] = alphaGibbs[:,:]
 		self.alpha_samples = np.vstack( [a0*np.ones(alpha_pad.shape[1]), alpha_pad] )
 
@@ -111,6 +112,37 @@ class LinReg:
 		
 		return out
 
+	def sample_pred(self, X):
+		# SURROGATE_MODEL: Function evaluates the linear model
+		# Assumption: input x only contains one row
+
+		# generate x_all (all basis vectors) based on model order
+		x_mat =  self.order_effects(X, self.order)
+		x_all = np.c_[np.ones(x_mat.shape[0]), x_mat]
+
+		# Watch out!
+		# check if x maps to an Inf output (if so, barrier=Inf)
+		# barrier = 0.
+		# if self.xInf.shape[0] != 0:
+		#	if np.equal(x, self.xInf).all(axis=1).any():
+		#		barrier = np.inf
+
+		# compute and return objective with barrier
+		out = np.dot(x_all, self.alpha_samples) #+ barrier
+		
+		return out
+	
+	def predict(self, X):
+		pred_samples = self.sample_pred(X)
+		return np.mean(pred_samples, axis=1)
+	
+	def pred_dist(self, X):
+
+		pred_samples = self.sample_pred(X)
+		samplers = get_multi_sampler(pred_samples[:, 
+			      np.floor(pred_samples.shape[1]*self.burnin).astype(int): ])
+		return samplers
+	
 	# ---------------------------------------------------------
 	# ---------------------------------------------------------
 

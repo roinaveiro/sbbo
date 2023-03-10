@@ -19,3 +19,28 @@ def generate_contamination_dynamics(random_seed=None):
     gammas = np.random.RandomState(random_seed).beta(restore_alpha, restore_beta, size=(n_stages, n_simulations))
 
     return init_Z, lambdas, gammas
+
+
+class Sampler(object):
+
+    def __init__(self, samples) -> None:
+        self.samples = samples
+
+    def sample(self, n_samples):
+
+        assert 1 <= n_samples <= self.samples.shape[0]
+        samples_perm = self.samples[np.random.permutation(np.arange(self.samples.shape[0]))]
+
+        return samples_perm[:n_samples]
+    
+
+def get_multi_sampler(samples):
+
+    if samples.shape[0] == 1:
+        return Sampler(samples[0])
+    else:
+        samplers = []
+        for i in range(samples.shape[0]):
+            samplers.append(Sampler(samples[i]))
+
+        return samplers
