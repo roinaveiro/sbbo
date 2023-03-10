@@ -68,7 +68,9 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
     k = 0
     iter = 0
     while(k < nsamples):
-
+        
+        if k%100==0:
+            print("Iter Gibbs", k)
         # Sample from the conditional posterior distribution
         sigma = np.sqrt(sigma2)
         Lambda_star = tau2 * np.diag(lambda2)

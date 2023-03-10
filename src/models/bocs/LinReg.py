@@ -70,6 +70,8 @@ class LinReg:
 		# run Gibbs sampler for nGibbs steps
 		attempt = 1
 		while(attempt):
+                        
+                        print("Attempt Gibbs", attempt)
 
 			# re-run if there is an error during sampling
 			try:
