@@ -70,9 +70,8 @@ class LinReg:
 		# run Gibbs sampler for nGibbs steps
 		attempt = 1
 		while(attempt):
-                        
-                        print("Attempt Gibbs", attempt)
 
+			print("Attempt Gibbs", attempt)            
 			# re-run if there is an error during sampling
 			try:
 				alphaGibbs,a0,_,_,_ = bhs(self.xTrain,self.yTrain,self.nGibbs,0,1)
