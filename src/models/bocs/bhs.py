@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 def bhs(Xorg, yorg, nsamples, burnin, thin):
     # Implementation of the Bayesian horseshoe linear regression hierarchy.
@@ -68,18 +69,17 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
     k = 0
     iter = 0
     while(k < nsamples):
-        
         if k%100==0:
             print("Iter Gibbs", k)
         # Sample from the conditional posterior distribution
         sigma = np.sqrt(sigma2)
         Lambda_star = tau2 * np.diag(lambda2)
         # Determine best sampler for conditional posterior of beta's
-        if (p > n) and (p > 200):
+        # Watch out!!
+        if (np.floor(p/10) > n) and (p > 200):
             b = fastmvg(X/sigma, y/sigma, sigma2*Lambda_star)
         else:
             b = fastmvg_rue(X/sigma, XtX/sigma2, y/sigma, sigma2*Lambda_star)
-
         # Sample sigma2
         e = y - np.dot(X,b)
         shape = (n + p) / 2.
@@ -95,6 +95,7 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
         scale = 1./xi + np.sum(b**2./lambda2)/2./sigma2
         tau2 = 1. / np.random.gamma(shape, 1./scale)
 
+
         # Sample nu
         scale = 1. + 1./lambda2
         nu = 1. / np.random.exponential(1./scale)
@@ -104,7 +105,7 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
         xi = 1. / np.random.exponential(1./scale)
 
         # Store samples
-        iter = iter + 1;
+        iter = iter + 1
         if iter > burnin:
             # thinning
             if (iter % thin) == 0:
@@ -112,7 +113,8 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
                 s2[:,k]   = sigma2
                 t2[:,k]   = tau2
                 l2[:,k]   = lambda2
-                k         = k + 1
+                k = k + 1
+
 
     # Re-scale coefficients
     #div_vector = np.vectorize(np.divide)

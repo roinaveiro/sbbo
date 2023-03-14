@@ -82,16 +82,14 @@ class LinReg:
 			# run until alpha matrix does not contain any NaNs
 			if not np.isnan(alphaGibbs).any():
 				attempt = 0
-			
+
 		# append zeros back - note alpha(1,:) is linear intercept
 		alpha_pad = np.zeros(nCoeffs)
 		alpha_pad[idx_nnzero] = alphaGibbs[:,-1]
-		self.alpha = np.append(a0, alpha_pad)
-
+		self.alpha = np.append(a0, alpha_pad)	
 		alpha_pad = np.zeros([nCoeffs, self.nGibbs])
 		alpha_pad[idx_nnzero] = alphaGibbs[:,:]
-		self.alpha_samples = np.vstack( [a0*np.ones(alpha_pad.shape[1]), alpha_pad] )
-
+		self.alpha_samples = np.vstack( [a0*np.ones(alpha_pad.shape[1]), alpha_pad] )	
 	# ---------------------------------------------------------
 	# ---------------------------------------------------------
 
