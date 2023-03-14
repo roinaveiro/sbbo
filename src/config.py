@@ -2,6 +2,9 @@ import numpy as np
 import pandas as pd
 
 
+RNA_CHAIN_LEN = 30
+########################################################################################################################
+
 CONTAMINATION_N_STAGES = 25
 
 def generate_contamination_dynamics(random_seed=None):
