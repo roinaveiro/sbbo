@@ -86,6 +86,9 @@ if __name__ == "__main__":
     elif args.learner == "BOCS":
         learner = LinReg(nVars=opt_prob.ncov, order=2)
         params["model"] = learner
+    elif args.learner == "BOCS_NS":
+        learner = LinReg(nVars=opt_prob.ncov, order=2)
+        params["model"] = learner
 
     if args.acqfun == "EI":
         params["af"] = "EI"
