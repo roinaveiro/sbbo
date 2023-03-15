@@ -3,6 +3,11 @@ import pandas as pd
 
 
 RNA_CHAIN_LEN = 30
+TEMP = 9.0
+
+NVARS_BQP = 10
+ALPHA_BQP = 10.0
+LMB_BQP   = 0.0
 ########################################################################################################################
 
 CONTAMINATION_N_STAGES = 25

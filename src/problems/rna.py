@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from seqfold import dg
-from src.config import RNA_CHAIN_LEN
+from src.config import RNA_CHAIN_LEN, TEMP
 
 
 
@@ -25,7 +25,7 @@ class RNA(object):
 
     def compute_obj(self, x, scale=True):
         x = x.reshape(1,-1)
-        mfe = dg(self.to_seq(x)[0], temp = 37.0)
+        mfe = dg(self.to_seq(x)[0], temp = TEMP)
         if scale:
             return -mfe + self.scaler
         else:

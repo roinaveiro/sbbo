@@ -4,8 +4,9 @@ import os
 import numpy as np
 import pandas as pd
 
-from src.latin_square import LatinSquare
-from src.contamination import Contamination
+from src.problems.latin_square import LatinSquare
+from src.problems.contamination import Contamination
+from src.problems.bqp import BQP
 
 from src.sbbo import SBBO
 
@@ -15,7 +16,7 @@ from src.sbbo_rs import RS
 from src.sbbo_sa import SA
 
 from ngboost import NGBRegressor
-from ngboost.distns import Exponential, Normal
+from ngboost.distns import Exponential, Normal, LogNormal
 from ngboost.scores import LogScore, CRPScore
 
 # Learners
@@ -68,6 +69,16 @@ if __name__ == "__main__":
             opt_prob = Contamination(lamda=0.0001, n=5, random_seed=seed_)
         else:
             opt_prob = Contamination(lamda=0.0001, n=5, random_seed=None)
+    elif args.problem == "BQP":
+        if random_seed_config_ is not None:
+            random_seed = generate_random_seed_contamination()
+            seed_ = random_seed[random_seed_config_]
+            print("Seed", seed_)
+            # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
+            opt_prob = BQP(n=5, random_seed=seed_)
+        else:
+            opt_prob = BQP(n=5, random_seed=None)
+
     elif args.problem == "LS5":
         opt_prob = LatinSquare(n=5)
 
