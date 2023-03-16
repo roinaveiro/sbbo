@@ -16,8 +16,8 @@ class SA:
         self.X = self.co_problem.X
         self.y = self.co_problem.y
 
-        self.z_old = self.X[np.argmax(self.y)]
-        self.old_energy = np.max(self.y)
+        self.z_old = self.co_problem.generate_candidate() # self.X[np.argmax(self.y)]
+        self.old_energy = self.co_problem.compute_obj(self.z_old ) # np.max(self.y)
         self.iter = 0
     
     def generate_candidate(self):
