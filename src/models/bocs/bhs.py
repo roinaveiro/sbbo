@@ -77,6 +77,8 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
         # Determine best sampler for conditional posterior of beta's
         # Watch out!!
         if (np.floor(p/10) > n) and (p > 200):
+            if k%100==0:
+                print("Fast Small Sampler")
             b = fastmvg(X/sigma, y/sigma, sigma2*Lambda_star)
         else:
             b = fastmvg_rue(X/sigma, XtX/sigma2, y/sigma, sigma2*Lambda_star)
