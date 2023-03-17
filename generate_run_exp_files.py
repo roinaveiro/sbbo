@@ -1,18 +1,19 @@
 import numpy as np
 import os
 
-run = True
-problem = 'CON'
-learner = 'NGBlin'
+run     = True
+problem = 'BQP'
+learner = 'BOCS'
 acqfun  = 'EI'
 search  = 'MH'
 epsilon = 0.0
 n_exp   = np.arange(0,10)
-seed    = np.arange(1,11) # Between 1 and 10 please!!
+# n_exp   = [19]
+seed    = 23*np.ones(21).astype(int) 
 
 header = '''#!/bin/bash
 #$ -q teano
-#$ -pe smp 5
+#$ -pe smp 64
 #$ -j yes
 #$ -cwd
 
