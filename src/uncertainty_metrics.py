@@ -180,6 +180,40 @@ class CalibratedNLL(AbstractRegressionMetric):
     def compute(self, y_true, y_pred, y_err, **kwargs):
         # TODO : implement this
         return None
+    
+
+class CoveragePlot():
+
+    def __init__(self, name='cvplot'):
+        self.name = name
+    
+    @staticmethod
+    def compute_intervals(predictions, q):
+        
+        low = np.zeros(len(predictions))
+        up = np.zeros(len(predictions))
+        
+        for i, pred in enumerate(predictions):
+            low[i] = np.quantile(pred.sample(1000), (1.0-q)/2.0)
+            up[i]  = np.quantile(pred.sample(1000), 1.0 - (1.0-q)/2.0)
+            
+        return low, up
+    
+    def empirical_coverage(self, y_true, y_pred_d, q):
+        
+        low, up = self.compute_intervals(y_pred_d, q)
+        comp = np.logical_and((y_true < up) , (y_true > low))
+        
+        return np.mean(comp)
+    
+    def compute(self, y_true, y_pred_d, num_bins=10):
+        qs = np.linspace(0, 1, num_bins)
+        Cqs = np.empty(qs.shape)
+        for ix, q in enumerate(qs):
+            Cqs[ix] = self.empirical_coverage(y_true, y_pred_d, q)
+
+        return qs, Cqs
+
 
 if __name__ == '__main__':
     pass

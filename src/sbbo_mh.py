@@ -115,6 +115,36 @@ class MHSBBO:
 
         return z_star_d, quality
     
+    def compute_trace(self):
+
+        z_init, y_sample, value = self.init_search()
+
+        iters = np.zeros(len(self.cooling_schedule))
+        temps = np.zeros_like(iters)
+        eus   = np.zeros_like(iters)
+
+        for i, temp in enumerate(self.cooling_schedule):
+
+            if i%1 == 0:
+                print("Percentage completed:", 
+                np.round( 100*i/len(self.cooling_schedule), 2) )
+                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
+                iters[i] = i
+                temps[i] = temp
+                eus[i]   = quality
+                #print("Current state", z_init.reshape(5,-1))
+                #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
+                print("Current quality", quality)
+                #print(np.mean(y_sample))
+
+            z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
+
+        df = pd.DataFrame({"Iteration" : iters, "Temperature": temps, "EU": eus})
+   
+        return df
+    
+    
     def update(self, candidate, value):
 
         self.X = np.vstack([self.X, candidate])
