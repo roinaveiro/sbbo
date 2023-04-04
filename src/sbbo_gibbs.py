@@ -40,8 +40,10 @@ class GibbsSBBO:
         
         z_init = self.co_problem.generate_candidate()
         z_init_d = self.co_problem.dummify(z_init)
-        preds = self.model.pred_dist(z_init_d)
-        y_sample = preds[0].sample(self.cooling_schedule[0])
+
+        init_pred = self.model.pred_dist(z_init_d)
+        y_sample = init_pred.sample(self.cooling_schedule[0])
+
         value = self.utility(y_sample, z_init, self.af)
 
         return z_init, y_sample, value
@@ -52,7 +54,7 @@ class GibbsSBBO:
         z_d = self.co_problem.dummify(z)
         #--#
         preds = self.model.pred_dist(z_d)
-        y_sample_new = preds[0].sample(len(y_sample_old))
+        y_sample_new = preds.sample(len(y_sample_old))
         value_new = self.utility(y_sample_new, z, self.af)
 
         condition = np.random.uniform(size=len(value_new)) < value_new / value_old
@@ -99,11 +101,15 @@ class GibbsSBBO:
 
         for i, temp in enumerate(self.cooling_schedule):
             if i%10 == 0:
-                # print("Percentage completed:", 
-                # np.round( 100*i/len(self.cooling_schedule), 2) )
-                # print("Current state", z_init.reshape(5,-1))
-                # print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
-                print(np.mean(y_sample))
+                print("Percentage completed:", 
+                np.round( 100*i/len(self.cooling_schedule), 2) )
+                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
+                #print("Current state", z_init.reshape(5,-1))
+                #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
+                print("Current quality", quality)
+                #print(np.mean(y_sample))
+
 
             z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
             y_sample = np.append(y_sample, np.random.choice(y_sample, self.step))
@@ -113,6 +119,37 @@ class GibbsSBBO:
         z_star_d = self.co_problem.dummify(z_star.reshape(1,-1))
 
         return z_star_d, quality
+    
+    def compute_trace(self):
+
+        z_init, y_sample, value = self.init_search()
+
+        iters = np.zeros(len(self.cooling_schedule))
+        temps = np.zeros_like(iters)
+        eus   = np.zeros_like(iters)
+
+        for i, temp in enumerate(self.cooling_schedule):
+
+            if i%1 == 0:
+                print("Percentage completed:", 
+                np.round( 100*i/len(self.cooling_schedule), 2) )
+                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
+                iters[i] = i
+                temps[i] = temp
+                eus[i]   = quality
+                #print("Current state", z_init.reshape(5,-1))
+                #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
+                print("Current quality", quality)
+                #print(np.mean(y_sample))
+
+            z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
+            y_sample = np.append(y_sample, np.random.choice(y_sample, self.step))
+            value = self.utility(y_sample, z_init, self.af)
+
+        df = pd.DataFrame({"Iteration" : iters, "Temperature": temps, "EU": eus})
+   
+        return df
     
     def update(self, candidate, value):
 
