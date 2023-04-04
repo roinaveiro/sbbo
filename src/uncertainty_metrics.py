@@ -194,8 +194,9 @@ class CoveragePlot():
         up = np.zeros(len(predictions))
         
         for i, pred in enumerate(predictions):
-            low[i] = np.quantile(pred.sample(1000), (1.0-q)/2.0)
-            up[i]  = np.quantile(pred.sample(1000), 1.0 - (1.0-q)/2.0)
+            c_sample = pred.sample(1000)
+            low[i] = np.quantile(c_sample, (1.0-q)/2.0)
+            up[i]  = np.quantile(c_sample, 1.0 - (1.0-q)/2.0)
             
         return low, up
     

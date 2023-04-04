@@ -5,6 +5,9 @@ dpi <- 700
 width <- 8.33
 height <- 5.79
 
+################
+# OPT PLOTS
+################
 
 data <- read_csv("results/BQP/BQP_full_results.csv")
 
@@ -50,4 +53,47 @@ ggsave(filename = "figs/BQP.png",
        device = "png", 
        dpi = dpi, width = width, height = height)
 
+################
+# ACC PLOTS
+################
+
+data <- read_csv("results/CON/acc_CON_ss200.csv")
+
+sum_data <- data %>% group_by(Algorithm, Quantile) %>% 
+  summarise("mean_R2"  = mean(R2),
+            "std_R2"   = sd(R2),
+            "mean_MAE" = mean(MAE),
+            "std_MAE"  = sd(MAE),
+            "mean_RMSE"= mean(RMSE),
+            "std_RMSE" = sd(RMSE),
+            "empQ"     = mean(`E-quantile`),
+            "empQ_u"     = mean(`E-quantile`) + sd(`E-quantile`),
+            "empQ_l"     = mean(`E-quantile`) - sd(`E-quantile`)
+  ) %>% 
+  mutate(Algorithm = paste0(Algorithm, " (R²: ", 
+                         round(mean_R2,2), " ",
+                         "±", round(std_R2,2), ")"))
+
+
+sum_data %>% ggplot(., aes(x=Quantile, y=empQ, color = Algorithm)) +
+  geom_line(size=0.5) +
+  geom_abline(intercept = 0.0, slope = 1, linetype = "dashed", color="gray") + 
+  geom_errorbar(aes(ymin=empQ_l, ymax=empQ_u), size=0.5, alpha=0.25,
+                position=position_dodge(0.05)) +
+  # scale_color_viridis_d() + 
+  labs(title    = "Contamination Problem",
+       subtitle = "Sample size: 200",
+       x = "Interval",
+       y = "Coverage") + 
+  theme_minimal() +
+  theme(legend.position="top", legend.box = "horizontal") +
+  theme(axis.text.x=element_text(angle=-90, hjust=0, vjust=1)) +
+  theme(plot.title=element_text(size=15, hjust=0.5, face="bold", vjust=-1)) +
+  theme(plot.subtitle=element_text(size=12, hjust=0.5, vjust=-1)) +
+  theme(text = element_text(size=12)) +
+  theme(legend.title = element_text(face = "bold")) 
+
+ggsave(filename = "figs/CON_acc200.png", 
+       device = "png", 
+       dpi = dpi, width = width, height = height)
   
