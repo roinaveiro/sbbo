@@ -9,7 +9,7 @@ height <- 5.79
 # OPT PLOTS
 ################
 
-data <- read_csv("results/BQP/BQP_full_results.csv")
+data <- read_csv("results/CON/CON_full_results.csv")
 
 
 pdata <- data %>% select(-current_vals) %>% 
@@ -57,7 +57,7 @@ ggsave(filename = "figs/BQP.png",
 # ACC PLOTS
 ################
 
-data <- read_csv("results/CON/acc_CON_ss200.csv")
+data <- read_csv("results/CON/acc_CON_ss50.csv")
 
 sum_data <- data %>% group_by(Algorithm, Quantile) %>% 
   summarise("mean_R2"  = mean(R2),
@@ -82,7 +82,7 @@ sum_data %>% ggplot(., aes(x=Quantile, y=empQ, color = Algorithm)) +
                 position=position_dodge(0.05)) +
   # scale_color_viridis_d() + 
   labs(title    = "Contamination Problem",
-       subtitle = "Sample size: 200",
+       subtitle = "Sample size: 50",
        x = "Interval",
        y = "Coverage") + 
   theme_minimal() +
@@ -93,7 +93,7 @@ sum_data %>% ggplot(., aes(x=Quantile, y=empQ, color = Algorithm)) +
   theme(text = element_text(size=12)) +
   theme(legend.title = element_text(face = "bold")) 
 
-ggsave(filename = "figs/CON_acc200.png", 
+ggsave(filename = "figs/CON_acc50.png", 
        device = "png", 
        dpi = dpi, width = width, height = height)
   
