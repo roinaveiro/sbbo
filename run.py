@@ -25,6 +25,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LassoCV
 from src.models.GPr import GPr
 from src.models.bocs.LinReg import LinReg
+from src.models.bnn.bnn import BNN
 
 
 from src.seed_conf import generate_random_seed_contamination
@@ -39,7 +40,7 @@ def parse_args():
     parser.add_argument("--search", required=True, type=str, default="MH")
     parser.add_argument("--niters", type=int, default=500)
     parser.add_argument("--epsilon", type=float, default=0.0)
-    parser.add_argument("--nexp", type=int, default=0)
+    parser.add_argument("--nexp", type=int, default=500)
     parser.add_argument("--seed_conf", type=int, default=None)
 
     return parser.parse_args()
@@ -56,9 +57,11 @@ if __name__ == "__main__":
 
 
     params = {}
-    params["cooling_schedule"] = np.arange(1, 1000, 10)
+    params["cooling_schedule"] = np.arange(1, 1000, 100) # np.arange(1, 1000, 10)
     params["burnin"] = 0.8
     params["modal"]  = False
+
+    n_init=10
 
     if args.problem == "CON":
         if random_seed_config_ is not None:
@@ -66,21 +69,21 @@ if __name__ == "__main__":
             seed_ = random_seed[random_seed_config_]
             print("Seed", seed_)
             # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
-            opt_prob = Contamination(lamda=0.0001, n=5, random_seed=seed_)
+            opt_prob = Contamination(lamda=0.0001, n=n_init, random_seed=seed_)
         else:
-            opt_prob = Contamination(lamda=0.0001, n=5, random_seed=None)
+            opt_prob = Contamination(lamda=0.0001, n=n_init, random_seed=None)
     elif args.problem == "BQP":
         if random_seed_config_ is not None:
             random_seed = generate_random_seed_contamination()
             seed_ = random_seed[random_seed_config_]
             print("Seed", seed_)
             # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
-            opt_prob = BQP(n=5, random_seed=seed_)
+            opt_prob = BQP(n=n_init, random_seed=seed_)
         else:
-            opt_prob = BQP(n=5, random_seed=None)
+            opt_prob = BQP(n=n_init, random_seed=None)
 
     elif args.problem == "LS5":
-        opt_prob = LatinSquare(n=5)
+        opt_prob = LatinSquare(n=n_init)
 
     if args.learner == "NGBdec":
         learner = DecisionTreeRegressor(criterion='friedman_mse', max_depth=5)
@@ -97,9 +100,10 @@ if __name__ == "__main__":
     elif args.learner == "BOCS":
         learner = LinReg(nVars=opt_prob.ncov, order=2)
         params["model"] = learner
-    elif args.learner == "BOCS_NS":
-        learner = LinReg(nVars=opt_prob.ncov, order=2)
+    elif args.learner == "BNN":
+        learner = BNN()
         params["model"] = learner
+        
 
     if args.acqfun == "EI":
         params["af"] = "EI"

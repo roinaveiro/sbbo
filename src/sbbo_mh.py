@@ -95,7 +95,7 @@ class MHSBBO:
 
         for i, temp in enumerate(self.cooling_schedule):
 
-            if i%10 == 0:
+            if i%1 == 0:
                 print("Percentage completed:", 
                 np.round( 100*i/len(self.cooling_schedule), 2) )
                 dist = self.model.pred_dist(z_init.reshape(1,-1))
@@ -154,7 +154,7 @@ class MHSBBO:
 
 
 
-    def utility(self, y, z, flag='AVG'):
+    def utility(self, y, z, flag='EI'):
 
         if flag == 'EI':
             result = np.zeros_like(y) 

@@ -1,12 +1,12 @@
 import numpy as np
 import pandas as pd
 
-from seqfold import dg
+import RNA
 from src.config import RNA_CHAIN_LEN, TEMP
 
 
 
-class RNA(object):
+class pRNA(object):
     """
     RNA MFE optimization problem
     """
@@ -14,7 +14,7 @@ class RNA(object):
         self.n_init = n
         self.ncov = RNA_CHAIN_LEN
         self.letters = 4
-        self.dict = {0:"A", 1:"C", 2:"G", 3:"T"}
+        self.dict = {0:"A", 1:"C", 2:"G", 3:"U"}
 
         self.scaler = 10.0
 
@@ -25,7 +25,8 @@ class RNA(object):
 
     def compute_obj(self, x, scale=True):
         x = x.reshape(1,-1)
-        mfe = dg(self.to_seq(x)[0], temp = TEMP)
+        _, mfe = RNA.fold(self.to_seq(x)[0])
+        # mfe = dg(self.to_seq(x)[0], temp = TEMP)
         if scale:
             return -mfe + self.scaler
         else:
@@ -48,6 +49,15 @@ class RNA(object):
 
     def generate_candidates_idx(self, z, idx):
         pass
+
+    '''
+    def desdummify(self, x):
+        return np.where(x.reshape(-1, self.letters) == 1)[1]# .reshape(x.shape[0], -1)
+
+    def dummify(self, x):
+        return np.eye(self.letters)[x.astype(int)].flatten().reshape(x.shape[0], -1)
+
+    '''
     
     def desdummify(self, x, n):
         aux = np.arange(1, self.letters).reshape(-1,1)
@@ -56,6 +66,7 @@ class RNA(object):
     def dummify(self, x):
         aux = np.vstack([np.zeros(self.letters-1), np.eye(self.letters-1)])
         return aux[x.astype(int)].flatten().reshape(x.shape[0], -1)
+    
     
     def to_seq(self, X):
         tmp = np.vectorize(self.dict.get)(X)

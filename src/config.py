@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-RNA_CHAIN_LEN = 30
+RNA_CHAIN_LEN = 40
 TEMP = 9.0
 
 NVARS_BQP = 10
@@ -36,10 +36,14 @@ class Sampler(object):
 
     def sample(self, n_samples):
 
-        assert 1 <= n_samples <= self.samples.shape[0]
-        samples_perm = self.samples[np.random.permutation(np.arange(self.samples.shape[0]))]
+        if False:
+            assert 1 <= n_samples <= self.samples.shape[0]
+            samples_perm = self.samples[np.random.permutation(np.arange(self.samples.shape[0]))]
 
-        return samples_perm[:n_samples]
+            return samples_perm[:n_samples]
+        
+        samp = self.samples[np.random.choice(self.samples.shape[0], size = n_samples)]
+        return samp
     
 
 def get_multi_sampler(samples):
