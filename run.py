@@ -7,6 +7,7 @@ import pandas as pd
 from src.problems.latin_square import LatinSquare
 from src.problems.contamination import Contamination
 from src.problems.bqp import BQP
+from src.problems.rna import pRNA
 
 from src.sbbo import SBBO
 
@@ -57,11 +58,11 @@ if __name__ == "__main__":
 
 
     params = {}
-    params["cooling_schedule"] = np.arange(1, 1000, 100) # np.arange(1, 1000, 10)
+    params["cooling_schedule"] =  np.arange(1, 10000, 250) # np.arange(1, 1000, 10)
     params["burnin"] = 0.8
     params["modal"]  = False
 
-    n_init=10
+    n_init = 100
 
     if args.problem == "CON":
         if random_seed_config_ is not None:
@@ -82,8 +83,20 @@ if __name__ == "__main__":
         else:
             opt_prob = BQP(n=n_init, random_seed=None)
 
+    elif args.problem == "pRNA":
+        if random_seed_config_ is not None:
+            random_seed = generate_random_seed_contamination()
+            seed_ = random_seed[random_seed_config_]
+            print("Seed", seed_)
+            # init_seed_ = sorted(random_seed_pair_[case_seed_])[int(random_seed_config_ % 5)]
+            opt_prob = pRNA(n=n_init, random_seed=seed_)
+        else:
+            opt_prob = pRNA(n=n_init, random_seed=None)
+
+
     elif args.problem == "LS5":
         opt_prob = LatinSquare(n=n_init)
+
 
     if args.learner == "NGBdec":
         learner = DecisionTreeRegressor(criterion='friedman_mse', max_depth=5)

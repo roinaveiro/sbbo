@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-RNA_CHAIN_LEN = 40
+RNA_CHAIN_LEN = 30
 TEMP = 9.0
 
 NVARS_BQP = 10

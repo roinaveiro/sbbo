@@ -29,6 +29,7 @@ class SBBO:
 
     def get_candidate(self):
         if np.random.uniform() < self.epsilon:
+            print("Generating at Random")
             candidate = self.co_problem.generate_candidate()
             dist = self.search_method.model.pred_dist(candidate.reshape(1,-1))
             quality = np.mean( self.search_method.utility(dist.sample(1000), candidate, self.search_method.af) )
@@ -38,6 +39,7 @@ class SBBO:
         return candidate, quality
 
     def evaluate_candidate(self, candidate):
+        candidate = self.co_problem.desdummify(candidate)
         value = self.co_problem.compute_obj(candidate)
         value_unscaled = self.co_problem.compute_obj(candidate, scale=False)
         return value, value_unscaled
@@ -55,14 +57,14 @@ class SBBO:
         current_vals = np.zeros(n_eval)
         iters = np.arange(n_eval)
 
-
         for i in range(n_eval):
             candidate, quality = self.get_candidate()
             value, value_unscaled =  self.evaluate_candidate(candidate)
             self.update(candidate, value)
             
             iters[i] = i
-            best_vals[i] = self.co_problem.compute_obj(self.X[self.y.argmax()], scale=False)
+            best_vals[i] = self.co_problem.compute_obj(
+                self.co_problem.desdummify(self.X[self.y.argmax()]), scale=False)
             current_vals[i] = value_unscaled
 
             print("Iter:", i)

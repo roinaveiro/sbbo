@@ -34,7 +34,6 @@ class MHSBBO:
                             self.co_problem.ncov] )
  
 
- 
 
     def init_search(self):
 
@@ -98,7 +97,8 @@ class MHSBBO:
             if i%1 == 0:
                 print("Percentage completed:", 
                 np.round( 100*i/len(self.cooling_schedule), 2) )
-                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                z_init_d = self.co_problem.dummify(z_init.reshape(1,-1))
+                dist = self.model.pred_dist(z_init_d)
                 quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
                 #print("Current state", z_init.reshape(5,-1))
                 #print("Current energy", self.model.predict(self.co_problem.dummify(z_init.reshape(1,-1)) ))
@@ -107,9 +107,7 @@ class MHSBBO:
 
             z_init, y_sample, value = self.update_all(i, temp, z_init, y_sample, value)
             
-            
-
-                
+              
         z_star, quality = self.extract_solution()
         z_star_d = self.co_problem.dummify(z_star.reshape(1,-1))
 
@@ -128,7 +126,8 @@ class MHSBBO:
             if i%1 == 0:
                 print("Percentage completed:", 
                 np.round( 100*i/len(self.cooling_schedule), 2) )
-                dist = self.model.pred_dist(z_init.reshape(1,-1))
+                z_init_d = self.co_problem.dummify(z_init.reshape(1,-1))
+                dist = self.model.pred_dist(z_init_d)
                 quality = np.mean( self.utility(dist.sample(1000), z_init, self.af) )
                 iters[i] = i
                 temps[i] = temp
@@ -193,7 +192,7 @@ class MHSBBO:
         else:
             z_star = self.z_samples[-1]
             quality = self.model.predict(self.co_problem.dummify(z_star.reshape(1,-1)) )
-            dist = self.model.pred_dist(z_star.reshape(1,-1))
+            dist = self.model.pred_dist(self.co_problem.dummify(z_star.reshape(1,-1)))
             quality = np.mean( self.utility(dist.sample(1000), z_star, self.af) )
 
         return z_star, quality

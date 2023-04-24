@@ -135,5 +135,5 @@ def default_hp(output_dim=1):
     hp.lr = 1e-3
     hp.epochs = 2000
     hp.batch_size = 128
-    hp.kld_beta = 2.0
+    hp.kld_beta = 0.1
     return hp
