@@ -62,7 +62,7 @@ if __name__ == "__main__":
     params["burnin"] = 0.8
     params["modal"]  = False
 
-    n_init = 100
+    n_init = 5
 
     if args.problem == "CON":
         if random_seed_config_ is not None:

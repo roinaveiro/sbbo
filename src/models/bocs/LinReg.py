@@ -49,7 +49,8 @@ class LinReg:
 		# set data
 		self.xTrain = X
 		self.yTrain = y
-
+                
+		print(self.xTrain.shape)
 		# setup data for training
 		self.setupData()
 

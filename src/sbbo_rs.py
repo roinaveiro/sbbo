@@ -15,9 +15,11 @@ class RS:
         self.co_problem = co_problem
         self.X = self.co_problem.X
         self.y = self.co_problem.y
-        
+    
     def iterate(self):
-        return self.co_problem.generate_candidate(), None
+        z_star = self.co_problem.generate_candidate()
+        z_star_d = self.co_problem.dummify(z_star.reshape(1,-1))
+        return z_star_d, None   
     
     def update(self, candidate, value):
         self.X = np.vstack([self.X, candidate])

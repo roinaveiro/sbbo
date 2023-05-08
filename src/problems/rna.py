@@ -4,7 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 
-import RNA
+# import RNA
 from src.config import RNA_CHAIN_LEN, TEMP
 
 
@@ -54,7 +54,7 @@ class pRNA(object):
         result = np.repeat(z, 4, axis=0)
         result[:, idx] = np.arange(4)
         return result
-
+    '''
     def desdummify(self, x):
         return np.where(x.reshape(-1, self.letters) == 1)[1]# .reshape(x.shape[0], -1)
 
@@ -62,14 +62,17 @@ class pRNA(object):
         return np.eye(self.letters)[x.astype(int)].flatten().reshape(x.shape[0], -1)
 
     '''
-    def desdummify(self, x, n):
+    def desdummify(self, x):
+        if len(x.shape) == 1:
+            x = x.reshape(1, -1)
+        n = x.shape[0]
         aux = np.arange(1, self.letters).reshape(-1,1)
         return np.dot(x.reshape(n, -1, self.letters - 1), aux).reshape(n,-1)
 
     def dummify(self, x):
         aux = np.vstack([np.zeros(self.letters-1), np.eye(self.letters-1)])
         return aux[x.astype(int)].flatten().reshape(x.shape[0], -1)
-    '''
+   
     
     def to_seq(self, X):
         tmp = np.vectorize(self.dict.get)(X)

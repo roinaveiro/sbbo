@@ -2,22 +2,23 @@ import numpy as np
 import os
 
 run     = True
-problem = 'BQP'
+problem = 'pRNA'
 learner = 'BOCS'
 acqfun  = 'EI'
 search  = 'MH'
 epsilon = 0.0
-n_exp   = np.arange(0,10)
-# n_exp   = [19]
-seed    = 23*np.ones(21).astype(int) 
+#n_exp   = np.arange(0,10)
+n_exp   = [11]
+seed    = 19*np.ones(21).astype(int) 
 
 header = '''#!/bin/bash
 #$ -q teano
-#$ -pe smp 64
+#$ -pe smp 16
 #$ -j yes
 #$ -cwd
 
-# Load anaconda malware environment
+# Load anaconda environment
+conda-init
 conda activate tf-sbbo
 
 # Run the executable

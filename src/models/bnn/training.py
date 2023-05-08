@@ -93,7 +93,8 @@ def train_step(model, x_train, y_train, optimizer, loss_fn, batch_size, sample_w
         y_batch = tf.gather(y_train, batch)
         w_batch = tf.gather(sample_weight, batch) if sample_weight is not None else sample_weight
         with tf.GradientTape() as tape:
-            y_pred = model(x_batch)
+            y_pred = tf.math.reduce_mean( model(tf.stack([x_batch]*1000)), axis=0 )
+            #y_pred = model(x_batch)
             loss = loss_fn(y_batch, y_pred, sample_weight=w_batch)
         grads = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))

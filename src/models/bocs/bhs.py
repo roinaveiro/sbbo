@@ -76,9 +76,10 @@ def bhs(Xorg, yorg, nsamples, burnin, thin):
         Lambda_star = tau2 * np.diag(lambda2)
         # Determine best sampler for conditional posterior of beta's
         # Watch out!!
-        if (np.floor(p/10) > n) and (p > 200):
+        if (np.floor(p/35) > n) and (p > 200):
             if k%100==0:
                 print("Fast Small Sampler")
+                print(f'n is {n} p is {p}')
             b = fastmvg(X/sigma, y/sigma, sigma2*Lambda_star)
         else:
             b = fastmvg_rue(X/sigma, XtX/sigma2, y/sigma, sigma2*Lambda_star)

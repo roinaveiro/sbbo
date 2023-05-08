@@ -48,7 +48,9 @@ class SA:
 
         self.z_old, self.old_energy = self.generate_candidate()
         self.iter += 1
-        return self.z_old, self.old_energy
+        self.z_star_d = self.co_problem.dummify(self.z_old.reshape(1,-1))
+        return self.z_star_d, self.old_energy
+
     
     def update(self, candidate, value):
         self.X = np.vstack([self.X, candidate])
