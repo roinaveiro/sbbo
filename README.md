@@ -1,2 +1,1 @@
-# sbbo
-Simulation based Bayesian Optimization
+# Code for Simulation based Bayesian Optimization
