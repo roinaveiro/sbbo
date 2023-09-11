@@ -9,8 +9,8 @@ height <- 5.79
 # OPT PLOTS
 ################
 
+# data <- read_csv("results/pRNA/pRNA_full_results_noBOCS.csv")
 data <- read_csv("results/CON/CON_full_results.csv")
-
 
 pdata <- data %>% select(-current_vals) %>% 
   mutate(Algorithm = algorithm) %>% 
@@ -35,7 +35,7 @@ pdata %>% filter(iter %% 5 == 0) %>%
   #geom_errorbar(aes(ymin=Lower, ymax=Upper), size=0.5, alpha=0.25,
   #              position=position_dodge(0.05)) +
   # scale_color_viridis_d() + 
-  labs(title    = "Binary Quadratic Problem",
+  labs(title    = "Contamination Problem",
        #subtitle = TeX("|Q| = 20, |T| = 20, |X| = 20"),
        x = "Iteration",
        y = "Best Value") + 
@@ -49,7 +49,7 @@ pdata %>% filter(iter %% 5 == 0) %>%
 
 
 
-ggsave(filename = "figs/BQP.png", 
+ggsave(filename = "figs/CON.png", 
        device = "png", 
        dpi = dpi, width = width, height = height)
 
@@ -57,9 +57,12 @@ ggsave(filename = "figs/BQP.png",
 # ACC PLOTS
 ################
 
-data <- read_csv("results/CON/acc_CON_ss50.csv")
-
-sum_data <- data %>% group_by(Algorithm, Quantile) %>% 
+data <- read_csv("results/CON/acc_CON_ss400.csv")
+sum_data <- data %>% mutate(Algorithm = fct_recode(Algorithm, "GPr" = "GPr",
+                              "BLr" = "BOCS",
+                              "NGBlinCV" = "NGBlinCV",
+                              "NGBdec" = "NGBdec")) %>% 
+  group_by(Algorithm, Quantile) %>% 
   summarise("mean_R2"  = mean(R2),
             "std_R2"   = sd(R2),
             "mean_MAE" = mean(MAE),
@@ -82,7 +85,7 @@ sum_data %>% ggplot(., aes(x=Quantile, y=empQ, color = Algorithm)) +
                 position=position_dodge(0.05)) +
   # scale_color_viridis_d() + 
   labs(title    = "Contamination Problem",
-       subtitle = "Sample size: 50",
+       subtitle = "Sample size: 400",
        x = "Interval",
        y = "Coverage") + 
   theme_minimal() +
@@ -93,7 +96,7 @@ sum_data %>% ggplot(., aes(x=Quantile, y=empQ, color = Algorithm)) +
   theme(text = element_text(size=12)) +
   theme(legend.title = element_text(face = "bold")) 
 
-ggsave(filename = "figs/CON_acc50.png", 
+ggsave(filename = "figs/CON_acc400.png", 
        device = "png", 
        dpi = dpi, width = width, height = height)
   
