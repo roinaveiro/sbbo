@@ -21,17 +21,22 @@ class BNN_engine(tf.keras.models.Model):
         self.bnn_layers = []
         cnn = False
         simple = True
+        super_simple = False
 
         if cnn: 
-            self.bnn_layers.append(tf.keras.layers.Reshape([90, 1]))
-            self.bnn_layers.append( tfp.layers.Convolution1DReparameterization(16, 
+            self.bnn_layers.append(tf.keras.layers.Reshape([25, 1]))
+            self.bnn_layers.append( tfp.layers.Convolution1DReparameterization(8, 
                 kernel_size=5, padding='SAME', activation=tf.nn.relu) )
             self.bnn_layers.append( tf.keras.layers.Flatten() )
-            self.bnn_layers.append( tfp.layers.DenseReparameterization(10, activation='relu') )
+            self.bnn_layers.append( tfp.layers.DenseReparameterization(5, activation='relu') )
 
         elif simple:
             self.bnn_layers.append(tfp.layers.DenseReparameterization(10, activation='relu'))
             self.bnn_layers.append(tfp.layers.DenseReparameterization(5, activation='relu'))
+        
+        elif super_simple:
+            self.bnn_layers.append(tfp.layers.DenseReparameterization(4, activation='relu'))
+
 
         else:
             self.bnn_layers.append(tfp.layers.DenseReparameterization(60, activation='relu',

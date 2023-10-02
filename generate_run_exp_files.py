@@ -2,17 +2,17 @@ import numpy as np
 import os
 
 run     = True
-problem = 'pRNA'
-learner = 'BOCS'
+problem = 'BQP'
+learner = 'BNN'
 acqfun  = 'EI'
 search  = 'MH'
 epsilon = 0.0
-#n_exp   = np.arange(0,10)
-n_exp   = [11]
-seed    = 19*np.ones(21).astype(int) 
+n_exp   = np.arange(0,10)
+#n_exp   = [11]
+seed    = 23*np.ones(21).astype(int) 
 
 header = '''#!/bin/bash
-#$ -q teano
+#$ -q "*@teano12.icmat.es"
 #$ -pe smp 16
 #$ -j yes
 #$ -cwd
