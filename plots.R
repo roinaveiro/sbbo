@@ -54,6 +54,21 @@ make_comparison_plot("CON", "Contamination Problem")
 make_comparison_plot("pRNA", "MFE RNA Design Problem", iter_lim=300)
 make_comparison_plot("BQP", "Binary Quadratic Problem")
 
+
+###################
+# CONVERGENCE PLOTS
+###################
+
+conv <- read_csv("results/convergence.csv")
+cols <- c("gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "red")
+conv <- conv %>% select(Temperature, EU, Exp)
+
+conv %>% group_by(Temperature) %>%  summarise(EU = mean(EU)) %>% mutate(Exp = 20) %>% 
+  bind_rows(conv) %>%
+  ggplot(aes(x=Temperature, y=EU, color=factor(Exp) )) + geom_line(alpha=0.8, lwd=0.8) + theme_minimal() + 
+  xlim(0,2500) + scale_color_manual(values = cols) + theme(legend.position="none") +
+  labs(x="H", y="Expected Utility", title = "Convergence of SBBO-MH")
+
 ################
 # ACC PLOTS
 ################
