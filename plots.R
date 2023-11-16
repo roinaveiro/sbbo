@@ -25,9 +25,9 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
               "Upper" = mean(best_vals) + 1*sd(best_vals), "Std. Dev" = sd(best_vals))
   
   
-  pdata %>% 
+  p<- pdata %>% 
     ggplot(aes(x=iter, y=`Best Value`, color=Algorithm, fill=Algorithm)) + 
-    geom_line(size=0.5) +
+    geom_line(size=0.5) + xlim(0, iter_lim) + 
     geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) +
     #geom_errorbar(aes(ymin=Lower, ymax=Upper), size=0.5, alpha=0.25,
     #              position=position_dodge(0.05)) +
@@ -42,7 +42,8 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
     theme(plot.title=element_text(size=15, hjust=0.5, face="bold", vjust=-1)) +
     theme(plot.subtitle=element_text(size=12, hjust=0.5, vjust=-1)) +
     theme(text = element_text(size=12)) +
-    theme(legend.title = element_text(face = "bold")) 
+    theme(legend.title = element_text(face = "bold")) + scale_y_log10()
+  print(p)
   
   
   ggsave(filename = fig_path, 
@@ -52,7 +53,7 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
 
 make_comparison_plot("CON", "Contamination Problem")
 make_comparison_plot("pRNA", "MFE RNA Design Problem", iter_lim=300)
-make_comparison_plot("BQP", "Binary Quadratic Problem")
+make_comparison_plot("BQP", "Binary Quadratic Problem", iter_lim = 120)
 
 
 ###################
