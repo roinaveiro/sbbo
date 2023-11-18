@@ -61,15 +61,19 @@ make_comparison_plot("BQP", "Binary Quadratic Problem", iter_lim = 120)
 ###################
 
 conv <- read_csv("results/convergence.csv")
-cols <- c("gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "gray", "red")
+cols <- c( rep("gray", 40), "red") 
 conv <- conv %>% select(Temperature, EU, Exp)
 
-conv %>% group_by(Temperature) %>%  summarise(EU = mean(EU)) %>% mutate(Exp = 20) %>% 
+conv %>% group_by(Temperature) %>%  summarise(EU = mean(EU)) %>% mutate(Exp = 40) %>% 
   bind_rows(conv) %>%
-  ggplot(aes(x=Temperature, y=EU, color=factor(Exp) )) + geom_line(alpha=0.8, lwd=0.8) + theme_minimal() + 
+  ggplot(aes(x=Temperature, y=EU, color=factor(Exp) )) + geom_line(alpha=0.5, lwd=0.7) +
+  theme_minimal() + 
   xlim(0,2500) + scale_color_manual(values = cols) + theme(legend.position="none") +
   labs(x="H", y="Expected Utility", title = "Convergence of SBBO-MH")
 
+ggsave(filename = "figs/convergence.png", 
+       device = "png", 
+       dpi = dpi, width = width, height = height)
 ################
 # ACC PLOTS
 ################
