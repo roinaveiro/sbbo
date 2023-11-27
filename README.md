@@ -74,7 +74,7 @@ Finally, tables can be reproduced running
 
 ```{bash}
 Rscript tables.R
-```´
+```
 
 Latex code for each table will be printed.
 
