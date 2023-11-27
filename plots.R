@@ -51,9 +51,9 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
          dpi = dpi, width = width, height = height)
 }
 
+make_comparison_plot("BQP", "Binary Quadratic Problem", iter_lim = 120)
 make_comparison_plot("CON", "Contamination Problem")
 make_comparison_plot("pRNA", "MFE RNA Design Problem", iter_lim=300)
-make_comparison_plot("BQP", "Binary Quadratic Problem", iter_lim = 120)
 
 
 ###################
@@ -74,6 +74,7 @@ conv %>% group_by(Temperature) %>%  summarise(EU = mean(EU)) %>% mutate(Exp = 40
 ggsave(filename = "figs/convergence.png", 
        device = "png", 
        dpi = dpi, width = width, height = height)
+
 ################
 # ACC PLOTS
 ################

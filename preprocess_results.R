@@ -1,7 +1,7 @@
 library(tidyverse)
 source("utils.R")
 
-results_path <- "/Users/roinaveiro/Library/CloudStorage/OneDrive-CUNEF/CUNEF/research/sbbo/results/"
+results_path <- "results/"
 
 preprocess_results <- function(problem){
   
@@ -25,5 +25,6 @@ preprocess_results <- function(problem){
   
 }
 
+preprocess_results("BQP")
 preprocess_results("CON")
 preprocess_results("pRNA")
