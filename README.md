@@ -1,6 +1,8 @@
 # Simlation Based Bayesian Optimization
 
-This repository contains the code needed to reproduce all the experiments in the "Simulation Based Bayesian Optimization" paper.
+This repository contains the code needed to reproduce all the experiments in the "Simulation Based Bayesian Optimization" paper: [https://arxiv.org/abs/2401.10811](https://arxiv.org/abs/2401.10811)
+
+> This paper introduces Simulation Based Bayesian Optimization (SBBO) as a novel approach to optimizing acquisition functions in Bayesian Optimization that only requires **sampling-based** access to posterior predictive distributions. SBBO allows the use of surrogate probabilistic models tailored for combinatorial spaces with discrete variables. Any Bayesian model in which posterior inference is carried out through Markov chain Monte Carlo can be selected as the surrogate model in SBBO. In applications involving combinatorial optimization, we demonstrate empirically the effectiveness of SBBO method using various choices of surrogate models.
 
 The code is written Python. A conda environment contains all necessary dependencies. It can be installed using
 
