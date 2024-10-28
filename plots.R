@@ -22,12 +22,11 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
     filter(iter <= iter_lim) %>% 
     group_by(iter, Algorithm) %>% 
     summarise("Best Value" = mean(best_vals),  "Lower" = mean(best_vals) - 1*sd(best_vals),
-              "Upper" = mean(best_vals) + 1*sd(best_vals), "Std. Dev" = sd(best_vals))
-  
+              "Upper" = mean(best_vals) + 1*sd(best_vals), "Std. Dev" = sd(best_vals)) 
   
   p<- pdata %>% 
     ggplot(aes(x=iter, y=`Best Value`, color=Algorithm, fill=Algorithm)) + 
-    geom_line(size=0.5) + xlim(0, iter_lim) + 
+    geom_line(size=0.5) + xlim(75, iter_lim) + 
     geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) +
     #geom_errorbar(aes(ymin=Lower, ymax=Upper), size=0.5, alpha=0.25,
     #              position=position_dodge(0.05)) +
@@ -42,7 +41,8 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
     theme(plot.title=element_text(size=15, hjust=0.5, face="bold", vjust=-1)) +
     theme(plot.subtitle=element_text(size=12, hjust=0.5, vjust=-1)) +
     theme(text = element_text(size=12)) +
-    theme(legend.title = element_text(face = "bold")) + scale_y_log10()
+    theme(legend.title = element_text(face = "bold")) 
+  
   print(p)
   
   
@@ -51,9 +51,78 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
          dpi = dpi, width = width, height = height)
 }
 
-make_comparison_plot("BQP", "Binary Quadratic Problem", iter_lim = 120)
-make_comparison_plot("CON", "Contamination Problem")
-make_comparison_plot("pRNA", "MFE RNA Design Problem", iter_lim=300)
+
+make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA){
+  
+  data_path <- paste0("results/", problem, "/", problem, "_full_results.csv")
+  fig_path <- paste0("figs/", problem, ".png")
+  data <- read_csv(data_path)
+  
+  pdata <- data %>% select(-current_vals) %>% 
+    mutate(Algorithm = algorithm) %>% 
+    filter( !(Algorithm %in% c("sbbo-NGBlin")) ) %>% 
+    filter(iter <= iter_lim) %>% 
+    group_by(iter, Algorithm) %>% 
+    summarise("Best Value" = mean(best_vals),  
+              "Lower" = mean(best_vals) - 1*sd(best_vals),
+              "Upper" = mean(best_vals) + 1*sd(best_vals), 
+              "Std. Dev" = sd(best_vals))
+  
+  # Sample every 10th iteration to reduce clutter in the error bars
+  pdata_sampled <- pdata %>% filter(iter %% 20 == 0)
+  
+  # Dodge the error bars horizontally to prevent overlap
+  pd <- position_dodge(width = 20) 
+  
+  if(is.na(hline)){
+    p <- pdata %>% 
+      ggplot(aes(x = iter, y = `Best Value`, color = Algorithm)) + 
+      geom_line(size = 0.7, position = pd) + 
+      geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) + 
+      xlim(0, iter_lim) + 
+      labs(title = label,
+           x = "Iteration",
+           y = "Best Value") + 
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 1)) +
+      theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold")) +
+      theme(text = element_text(size = 12)) +
+      theme(legend.title = element_text(face = "bold"), legend.position = "none") +
+      facet_wrap(~Algorithm, nrow = 1) 
+    
+  }
+  else{
+    p <- pdata %>% 
+      ggplot(aes(x = iter, y = `Best Value`, color = Algorithm, fill=Algorithm)) + 
+      geom_line(size = 0.7, position = pd) + 
+      geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) + 
+      xlim(0, iter_lim) + 
+      labs(title = label,
+           x = "Iteration",
+           y = "Best Value") + 
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 1)) +
+      theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold")) +
+      theme(text = element_text(size = 12)) +
+      theme(legend.title = element_text(face = "bold"), legend.position = "none") +
+      facet_wrap(~Algorithm, nrow = 1) + 
+      geom_hline(yintercept = 11.24, linetype = "dashed", color = "gray")
+    p <- p + theme(strip.text = element_text(size = 18))
+    
+  }
+  
+  print(p)
+  
+  ggsave(filename = fig_path, 
+         plot = p,
+         device = "png", 
+         dpi = 300, width = 8, height = 4)
+}
+
+
+make_comparison_plot2("BQP", "Binary Quadratic Problem", iter_lim = 120)
+make_comparison_plot2("CON", "Contamination Problem")
+make_comparison_plot2("pRNA", "MFE RNA Design Problem", iter_lim=300)
 
 
 ###################
