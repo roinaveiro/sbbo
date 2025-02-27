@@ -2,8 +2,8 @@ library(tidyverse)
 library(latex2exp)
 
 dpi <- 700
-width <- 8.33
-height <- 5.79
+width <- 10
+height <- 5
 
 ################
 # OPT PLOTS
@@ -84,10 +84,11 @@ make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA, nexp=1
            y = "Best Value") + 
       theme_minimal() +
       theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 1)) +
-      theme(plot.title = element_text(size = 15, hjust = 0.5, face = "bold")) +
-      theme(text = element_text(size = 12)) +
+      theme(plot.title = element_text(size = 16, hjust = 0.5, face = "bold")) +
+      theme(text = element_text(size = 14)) +
       theme(legend.title = element_text(face = "bold"), legend.position = "none") +
       facet_wrap(~Algorithm, nrow = 1) 
+   # p <- p + theme(strip.text = element_text(size = 18))
     
   }
   else{
@@ -106,7 +107,6 @@ make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA, nexp=1
       theme(legend.title = element_text(face = "bold"), legend.position = "none") +
       facet_wrap(~Algorithm, nrow = 1) + 
       geom_hline(yintercept = 11.24, linetype = "dashed", color = "gray")
-    p <- p + theme(strip.text = element_text(size = 18))
     
   }
   
@@ -115,7 +115,7 @@ make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA, nexp=1
   ggsave(filename = fig_path, 
          plot = p,
          device = "png", 
-         dpi = 300, width = 8, height = 4)
+         dpi = dpi, width = width, height = height)
 }
 
 

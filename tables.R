@@ -7,20 +7,20 @@ library(kableExtra)
 # Tables
 ################
 
-make_table <- function(problem, label, iter_lim=499){
+make_table <- function(problem, label, iter_lim=499, nexp=10){
   
   data_path <- paste0("results/", problem, "/", problem, "_full_results.csv")
   fig_path <- paste0("figs/", problem, ".png")
   # data <- read_csv("results/pRNA/pRNA_full_results_noBOCS.csv")
   data <- read_csv(data_path)
   
-  pdata <- data %>% select(-current_vals) %>% 
+  pdata <- data %>% 
     mutate(Algorithm = algorithm) %>% 
     filter( !(Algorithm %in% c("sbbo-NGBlin")) ) %>% 
     filter(iter == iter_lim) %>% 
     group_by(iter, Algorithm) %>% 
-    summarise("Best Value" = mean(best_vals),  "Lower" = mean(best_vals) - 1*sd(best_vals),
-              "Upper" = mean(best_vals) + 1*sd(best_vals), "Std. Dev" = sd(best_vals)) %>% 
+    summarise("Best Value" = mean(best_vals),  "Lower" = mean(best_vals) - 1*sd(best_vals)/sqrt(nexp),
+              "Upper" = mean(best_vals) + 1*sd(best_vals)/sqrt(nexp), "Std. Dev" = sd(best_vals)/sqrt(nexp)) %>% 
     ungroup() %>% 
     select(Algorithm, `Best Value`, `Std. Dev`)
   
@@ -62,13 +62,13 @@ fig_path <- paste0("figs/", problem, ".png")
 # data <- read_csv("results/pRNA/pRNA_full_results_noBOCS.csv")
 data <- read_csv(data_path)
 
-pdata <- data %>% mutate(best_vals = opt - best_vals) %>% select(-current_vals) %>% 
+pdata <- data %>% mutate(best_vals = opt - best_vals)  %>% 
   mutate(Algorithm = algorithm) %>% 
   filter( !(Algorithm %in% c("sbbo-NGBlin")) ) %>% 
   filter(iter == iter_lim) %>% 
   group_by(iter, Algorithm) %>% 
-  summarise("Best Value" = mean(best_vals),  "Lower" = mean(best_vals) - 1*sd(best_vals),
-            "Upper" = mean(best_vals) + 1*sd(best_vals), "Std. Dev" = sd(best_vals)) %>% 
+  summarise("Best Value" = mean(best_vals),  "Lower" = mean(best_vals) - 1*sd(best_vals)/sqrt(10),
+            "Upper" = mean(best_vals) + 1*sd(best_vals)/sqrt(10), "Std. Dev" = sd(best_vals)/sqrt(10)) %>% 
   ungroup() %>% 
   select(Algorithm, `Best Value`, `Std. Dev`)
 
