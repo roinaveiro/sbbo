@@ -10,9 +10,9 @@ preprocess_results <- function(problem){
   #all_labels <- c("RS", "SA", "sbbo-BOCS", "sbbo-BNN", "sbbo-GPr", "sbbo-NGBdec", 
   #                "sbbo-NGBlinCV")
   
-  models <- c("RS", "SA", "MH/BOCS", "MH/GPr", "MH/NGBdec", 
+  models <- c("RS", "SA", "COMBO", "MH/BOCS", "MH/GPr", "MH/NGBdec", 
               "MH/NGBlinCV", "MH/BNN")
-  all_labels <- c("RS", "SA", "sbbo-BLr", "sbbo-GPr", "sbbo-NGBdec", 
+  all_labels <- c("RS", "SA", "COMBO", "sbbo-BLr", "sbbo-GPr", "sbbo-NGBdec", 
                   "sbbo-NGBlinCV", "sbbo-BNN")
   
   

@@ -133,3 +133,5 @@ data/
 
 COMBO/*.out
 *.out
+
+results_old

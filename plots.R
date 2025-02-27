@@ -52,32 +52,31 @@ make_comparison_plot <- function(problem, label, iter_lim=500){
 }
 
 
-make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA){
+make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA, nexp=10){
   
   data_path <- paste0("results/", problem, "/", problem, "_full_results.csv")
   fig_path <- paste0("figs/", problem, ".png")
   data <- read_csv(data_path)
   
-  pdata <- data %>% select(-current_vals) %>% 
+  pdata <- data %>% 
     mutate(Algorithm = algorithm) %>% 
     filter( !(Algorithm %in% c("sbbo-NGBlin")) ) %>% 
     filter(iter <= iter_lim) %>% 
     group_by(iter, Algorithm) %>% 
     summarise("Best Value" = mean(best_vals),  
-              "Lower" = mean(best_vals) - 1*sd(best_vals),
-              "Upper" = mean(best_vals) + 1*sd(best_vals), 
-              "Std. Dev" = sd(best_vals))
+              "Lower" = mean(best_vals) - 1*sd(best_vals)/sqrt(nexp),
+              "Upper" = mean(best_vals) + 1*sd(best_vals)/sqrt(nexp), 
+              "Std. Dev" = sd(best_vals)/sqrt(10)) %>% 
+    mutate(Algorithm = 
+             factor(Algorithm, 
+                    levels = c("SA", "RS", "COMBO", "sbbo-BLr", "sbbo-GPr", 
+                               "sbbo-BNN", "sbbo-NGBlinCV", "sbbo-NGBdec")))
   
-  # Sample every 10th iteration to reduce clutter in the error bars
-  pdata_sampled <- pdata %>% filter(iter %% 20 == 0)
-  
-  # Dodge the error bars horizontally to prevent overlap
-  pd <- position_dodge(width = 20) 
   
   if(is.na(hline)){
     p <- pdata %>% 
       ggplot(aes(x = iter, y = `Best Value`, color = Algorithm)) + 
-      geom_line(size = 0.7, position = pd) + 
+      geom_line(size = 0.7) + 
       geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) + 
       xlim(0, iter_lim) + 
       labs(title = label,
@@ -94,7 +93,7 @@ make_comparison_plot2 <- function(problem, label, iter_lim=500, hline=NA){
   else{
     p <- pdata %>% 
       ggplot(aes(x = iter, y = `Best Value`, color = Algorithm, fill=Algorithm)) + 
-      geom_line(size = 0.7, position = pd) + 
+      geom_line(size = 0.7) + 
       geom_ribbon(aes(ymin=Lower,ymax=Upper), linetype = 0, alpha=0.1) + 
       xlim(0, iter_lim) + 
       labs(title = label,
